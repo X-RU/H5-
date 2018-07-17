@@ -19,7 +19,7 @@ Route::get('/hello', function () {
     return 'hello,world';
 });
 
-
+Route::get('/user/message', 'UserController@getUser');
 
 Auth::routes();
 

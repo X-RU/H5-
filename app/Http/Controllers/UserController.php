@@ -1,25 +1,23 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Student;
+use App\User;
 
 class UserController extends Controller{
 
-	public function test3(){
-
-		// all()方法查询所有数据
-		$studnets=Student::all();
-		// dd($studnets);
-
-		//find()查询一条，依据主键查询。findOrFail()查找不存在的记录时会抛出异常
-		$student=Student::find(5);  //主键为5的记录
-		var_dump($student);
-
-		//查询构造器的使用,省略了指定表名
-		$student=Student::get();  
-		var_dump($student);
-
+	/**
+	 * 获取用户信息
+	 * @param  Request $request
+	 * @return view:'user_msg';data:[...]
+	 *
+	 */
+	public function getUser(Request $request) {
+		$users = new User;
+		$user = $users->find($request -> input('id'));
+		return view('user_msg', ['id' => $user['id'], 'idStr' => $user['idStr'],'screen_name' => $user['screen_name'], 'province' => $user['province'], 'city' => $user['city'], 'location' => $user['location'],'description' => $user['description'],'profile_Image_url' => $user['profile_Image_url'],
+        'profile_url' => $user['profile_url'],'gender' => $user['gender'],'remark' => $user['remark'], 'create_at' => $user['create_at'], 'avatar_hd' => $user['avatar_hd'], 'online_status' => $user['online_status'], 'lang' => $user['lang']]);
 	}
-
 }
