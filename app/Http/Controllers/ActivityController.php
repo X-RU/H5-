@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
-use App\Student;
+use App\Activity;
 
-class StudentController extends Controller{
+class ActivityController extends Controller{
 
 	public function test3(){
 
 		// all()方法查询所有数据
-		$studnets=Student::all();
-		// dd($studnets);
+		$activity=Activity::all();
+		dd($activity);
 
 		//find()查询一条，依据主键查询。findOrFail()查找不存在的记录时会抛出异常
 		$student=Student::find(5);  //主键为5的记录
