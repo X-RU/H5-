@@ -19,7 +19,7 @@ class Label extends Model
      *
      * @var int
      */
-    protected $primaryKey = 'pk_label';
+    protected $primaryKey = 'id';
 
 
     /**
@@ -35,7 +35,6 @@ class Label extends Model
      * @var array
      */
       protected $fillable = [
-        'pk_label',     #标签ID
         'label_name'       #标签名称
     ];
 }

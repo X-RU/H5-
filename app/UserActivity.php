@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User_activity extends Model
+class UserActivity extends Model
 {
 
     /**
@@ -19,7 +19,7 @@ class User_activity extends Model
      *
      * @var int
      */
-    protected $primaryKey = 'pk_merge';
+    protected $primaryKey = 'id';
 
 
     /**

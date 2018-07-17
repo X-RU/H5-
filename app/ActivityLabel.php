@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Activity_label extends Model
+class ActivityLabel extends Model
 {
 
     /**
@@ -19,7 +19,7 @@ class Activity_label extends Model
      *
      * @var int
      */
-    protected $primaryKey = 'pk_merge';
+    protected $primaryKey = 'id';
 
 
     /**

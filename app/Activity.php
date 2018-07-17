@@ -19,10 +19,10 @@ class Activity extends Model
      *
      * @var int
      */
-    protected $primaryKey = 'pk_activity';
+    protected $primaryKey = 'id';
 
     //活动创建时间，系统自动维护，默认还有活动更新时间
-    const CREATED_AT = 'create_time'; 
+    // const CREATED_AT = 'create_time'; 
 
     /**
      * The attributes that are mass assignable.
