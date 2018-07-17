@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class UserController extends Controller{
 	
@@ -14,32 +17,5 @@ class UserController extends Controller{
 	}
 
 	 /**
-     * 更新用户个人信息（这个在本次开发过程中并不需要）
-     *
-     * @param Request $request
-     * @return Response
-     */
-	public function updateMyMessage(Request $request){
-
-	}
-
-	 /**
-     * 给用户推荐活动
-     *
-     * @param int $user_id
-     * @return Response
-     */
-	public function recommendActivityToUser(){
-
-	}
-
-	 /**
-     * 获取我的个人信息
-     *
-     * @param int $user_id
-     * @return Response
-     */
-	public function getMyMessage(){
-
 	}
 }

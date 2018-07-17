@@ -2,13 +2,10 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class User extends Model
 {
-    use Notifiable;
-
     /**
      * The database table used by the model.
      *
@@ -24,15 +21,21 @@ class User extends Authenticatable
     protected $primaryKey = 'id';
 
     //设置主键是非递增的，是可以自己设置的。
-    protected $incrementing = false;
+    public $incrementing = false;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
+<<<<<<< HEAD
         'id','idStr','screen_name', 'province', 'city','location','description','profile_Image_url',
         'profile_url','remark'，'avatar_hd','online_status','lang','create_at','update_at'
+=======
+        'id','idStr','screen_name', 'province', 'city',
+        'location','description','profile_Image_url',
+        'profile_url','remark','avatar_hd','online_status','lang'
+>>>>>>> dev
     ];
 
     /**
