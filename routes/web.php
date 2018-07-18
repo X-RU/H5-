@@ -53,24 +53,31 @@ Route::group(['prefix'=> 'project'], function () {
 	//搜索活动路由
 	Route::get('search','ActivityController@projectSearch')->name('projectSearch');
 
+	//某一活动的详细内容路由
+	Route::get('detailed/{id}','ActivityController@projectList')->name('projectList');
+
+	//某一活动的参与人员
+	Route::get('relationPeople/{id}','ActivityController@relationPeople')->name('relationPeople');
 
 });
 
 
-//获取用户信息
+//获取用户信息路由
 Route::get('/user/message/{id}', 'UserController@getUser')->middleware('auth');
 
 //使用微博登录：获取code
-Route::get('user/weibo_login', 'UserController@weiboLogin');
+Route::get('/user/weibo_login', 'UserController@weiboLogin');
 
 //使用微博登录：获取access_token
-Route::get('user/access_token', 'UserController@accessToken');
+Route::get('/user/access_token', 'UserController@accessToken');
 
 //使用微博登录：获取用户信息
-Route::get('user/get_weibo_user', 'UserController@getWeiboUser');
+Route::get('/user/get_weibo_user', 'UserController@getWeiboUser');
 
-//用户个人信息修改
-Route::get('/user/update', 'UserController@updateUser');
+//与用户有关的所有的活动的列表路由
+Route::get('/user/activityList/{user_id}','UserController@activityList')->name('activityList');
+
+
 
 
 

@@ -81,6 +81,12 @@ class ActivityController extends Controller{
 			$description = "该用户很懒，什么都没填。";
 		$activity->description = $description;
 
+		$status = $request->input('status');
+		if(is_null($status)&&is_empty($status))
+			$status = 4;
+
+		$activity->status = $status;
+
 		var_dump($activity->save());
 
 		$activityController = new ActivityController();

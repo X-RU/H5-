@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\User;
+use App\Activity;
+use App\UserActivity;
 use GuzzleHttp\Client;
 
 class UserController extends Controller{
@@ -32,7 +34,7 @@ class UserController extends Controller{
 	public function weiboLogin() {
 
 		$client_id = '1528221042';
-		$redirect_uri = 'user/access_token';
+		$redirect_uri = 'urlencode('http://h5.jayna.fun/user/access_token');;
 		$display = 'mobile';
 		return redirect("https://api.weibo.com/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&display=$display");
 	}
@@ -48,8 +50,9 @@ class UserController extends Controller{
 		$client_id = '1528221042';
 		$client_secret = '7dc8b9448e42a8a1be7c3021f7fb1ba6';
 		$grant_type = 'authorization_code';
-		$redirect_uri = 'user/get_weibo_user';
-		return redirect("https://api.weibo.com/oauth2/access_token?client_id=$client_id&client_secret=$client_secret&grant_type=$grant_type&code=$code&redirect_uri=$redirect_uri");
+		$redirect_uri = urlencode('http://h5.jayna.fun/user/get_weibo_user');
+		$http = new Client();
+		$http->request('POST', "https://api.weibo.com/oauth2/access_token",['client_id'=>$client_id, 'client_secret'=>$client_secret, 'grant_type'=>$grant_type, 'code'=>$code, 'redirect_uri'=>$redirect_uri]);
 	}
 
 	/**
@@ -96,6 +99,45 @@ class UserController extends Controller{
 		Auth::login($user,true);
 
 		return view('home', ['user'=>$user]);
+	}
+
+	public function activityList($user_id){
+
+		$theActivitiesICreate = array();
+
+		//查询用户创建的活动
+		$theActivitiesICreate = Activity::where('init_user_id',$user_id)->get();
+
+		//查询用户参加的活动关系
+		$activity_relations = UserActivity::where('user_id',$user_id)->get();
+
+		//创建活动id列表
+		$activity_id_list = array(); 
+
+		//根据用户活动关系获取活动id
+		foreach($activity_relations as $activity_relation){
+
+			array_push($activity_id_list,$activity_relation->activity_id);
+
+		}
+
+		$theActivitiesIAttend = array();
+
+		//我参加的活动
+		$theActivitiesIAttend = Activity::find($activity_id_list);
+
+		$theActivitiesIAttend = array_merge($theActivitiesIAttend,$theActivitiesICreate);
+
+		$userController = new UserController;
+
+		return $userController->response_cjj($theActivitiesIAttend,'200','success');
+	}
+
+	//装饰response接口
+	public function response_cjj($data, $code = '200', $message = 'success'){
+
+		return response()->json(['code' =>$code, 'message' => $message, 'data' =>$data]);
+
 	}
 
 }
