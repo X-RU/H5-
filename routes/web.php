@@ -66,7 +66,7 @@ Route::get('/wb_187ec29670282439.txt', function() {
     } else {
         echo '文件不存在';
     }
-})
+});
 
 //为路由添加前缀
 Route::group(['prefix'=> 'project'], function () {
