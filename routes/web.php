@@ -59,6 +59,15 @@ Route::group(['prefix'=> 'project'], function () {
 
 });
 
+Route::get('/wb_187ec29670282439.txt', function() {
+    $file = '/' . 'wb_187ec29670282439' . '.txt';
+    if(file_exists( $file )) {
+        echo file_get_contents( $file );
+    } else {
+        echo '文件不存在';
+    }
+})
+
 //为路由添加前缀
 Route::group(['prefix'=> 'project'], function () {
 
