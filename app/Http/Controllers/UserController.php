@@ -34,7 +34,7 @@ class UserController extends Controller{
 	public function weiboLogin() {
 
 		$client_id = '1528221042';
-		$redirect_uri = 'urlencode('http://h5.jayna.fun/user/access_token');;
+		$redirect_uri = urlencode('http://h5.jayna.fun/user/access_token');
 		$display = 'mobile';
 		return redirect("https://api.weibo.com/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&display=$display");
 	}
@@ -126,7 +126,7 @@ class UserController extends Controller{
 		//我参加的活动
 		$theActivitiesIAttend = Activity::find($activity_id_list);
 
-		$theActivitiesIAttend = array_merge($theActivitiesIAttend,$theActivitiesICreate);
+		$theActivitiesIAttend = array_collapse($theActivitiesIAttend,$theActivitiesICreate);
 
 		$userController = new UserController;
 
