@@ -25,16 +25,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/hello', function () {
-    return 'hello,world';
-});
-
 Route::get('/user/message', 'UserController@getUser');
 
 Auth::routes();
 
 //使用 name 方法链的方式来定义该路由的名称
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
 
 //为路由添加前缀
 Route::group(['prefix'=> 'project'], function () {
@@ -57,21 +53,26 @@ Route::group(['prefix'=> 'project'], function () {
 	//搜索活动路由
 	Route::get('search','ActivityController@projectSearch')->name('projectSearch');
 
+
 });
 
-//为路由添加前缀
-Route::group(['prefix'=> 'project'], function () {
 
-	//更新我的个人信息
-	Route::post('update','UserController@updateMyMessage')->name('updateMyMessage');
-	
-	//给某一用户推荐活动
-	Route::get('recommend','UserController@recommendActivityToUser')->name('recommendActivityToUser');
+//获取用户信息
+Route::get('/user/message/{id}', 'UserController@getUser')->middleware('auth');
 
-	//获取我的个人信息
-	Route::get('message','UserController@getMyMessage')->name('getMyMessage');
-	
-});
+//使用微博登录：获取code
+Route::get('user/weibo_login', 'UserController@weiboLogin');
+
+//使用微博登录：获取access_token
+Route::get('user/access_token', 'UserController@accessToken');
+
+//使用微博登录：获取用户信息
+Route::get('user/get_weibo_user', 'UserController@getWeiboUser');
+
+//用户个人信息修改
+Route::get('/user/update', 'UserController@updateUser');
+
+
 
 
 

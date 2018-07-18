@@ -27,16 +27,7 @@ class User extends Model
      *
      * @var array
      */
-    protected $fillable = [
-<<<<<<< HEAD
-        'id','idStr','screen_name', 'province', 'city','location','description','profile_Image_url',
-        'profile_url','remark'，'avatar_hd','online_status','lang','create_at','update_at'
-=======
-        'id','idStr','screen_name', 'province', 'city',
-        'location','description','profile_Image_url',
-        'profile_url','remark','avatar_hd','online_status','lang'
->>>>>>> dev
-    ];
+    protected $fillable = ['id','idStr','screen_name','province','city','location','description','profile_Image_url','profile_url','gender','remark','avatar_hd','online_status','lang','create_at','update_at'];
 
     /**
      * The attributes that should be hidden for arrays.
