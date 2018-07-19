@@ -46,19 +46,24 @@ class UserController extends Controller{
 	 */
 	public function accessToken(Request $request) {
 		$code = $request['code'];
+		$params = [
+			'client_id' => '1528221042',
+			'client_secret' => '7dc8b9448e42a8a1be7c3021f7fb1ba6',
+			'grant_type' => 'authorization_code',
+			'redirect_uri' => 'http://h5.jayna.fun/user/access_token',
+			'code' => $code
+		];
 		$http = new Client();
-		if (!empty($code)) {
-			$params = [
-				'client_id' => '1528221042',
-				'client_secret' => '7dc8b9448e42a8a1be7c3021f7fb1ba6',
-				'grant_type' => 'authorization_code',
-				'redirect_uri' => 'http://h5.jayna.fun/user/access_token',
-				'code' => $code
-			];
-			$http->request('POST', "https://api.weibo.com/oauth2/access_token", [
-				'form_params' => $params
-			]);
-		} else {
+		$requestBody = $http->request('POST', "https://api.weibo.com/oauth2/access_token",['form_params' => $params])->getBody();
+
+		$contents = json_decode($requestBody->getContents(), true);
+		$access_token = $contents['access_token'];
+		$uid = $contents['uid'];
+		return redirect()->action('UserController@getWeiboUser', ['access_token'=>$access_token, 'uid'=>$uid]);
+	}
+
+
+		public function getWeiboUser(Request $request){
 			//从request中获取数据
 			$access_token = $request['access_token'];
 
@@ -73,7 +78,7 @@ class UserController extends Controller{
 			//未来可能有用，先注释了
 			//$data = json_decode((string)$response->getBody(), true);
 
-			$data = $response->getBody();
+			$data = json_decode((string)$response->getBody(), true);
 
 			$user = new User;
 
@@ -94,7 +99,6 @@ class UserController extends Controller{
 				$user->avatar_hd = $data['avatar_hd'];
 				$user->online_status = $data['online_status'];
 				$user->lang = $data['lang'];
-				$user->remember_token = api_token($user);
 				$user->save();
 			}
 
@@ -116,7 +120,7 @@ class UserController extends Controller{
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();
 
 		//创建活动id列表
-		$activity_id_list = array(); 
+		$activity_id_list = array();
 
 		//根据用户活动关系获取活动id
 		foreach($activity_relations as $activity_relation){
