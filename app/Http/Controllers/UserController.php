@@ -45,60 +45,64 @@ class UserController extends Controller{
 	 * @return redirect to https://api.weibo.com/oauth2/access_token
 	 */
 	public function accessToken(Request $request) {
-
 		$code = $request['code'];
-		$client_id = '1528221042';
-		$client_secret = '7dc8b9448e42a8a1be7c3021f7fb1ba6';
-		$grant_type = 'authorization_code';
-		$redirect_uri = urlencode('http://h5.jayna.fun/user/get_weibo_user');
 		$http = new Client();
-		$http->request('POST', "https://api.weibo.com/oauth2/access_token",['client_id'=>$client_id, 'client_secret'=>$client_secret, 'grant_type'=>$grant_type, 'code'=>$code, 'redirect_uri'=>$redirect_uri]);
-	}
+		if (!empty($code)) {
+			$params = [
+				'client_id' => '1528221042',
+				'client_secret' => '7dc8b9448e42a8a1be7c3021f7fb1ba6',
+				'grant_type' => 'authorization_code',
+				'redirect_uri' => 'http://h5.jayna.fun/user/access_token',
+				'code' => $code
+			];
+			$http->request('POST', "https://api.weibo.com/oauth2/access_token", [
+				'form_params' => $params
+			]);
+		} else {
+			//从request中获取数据
+			$access_token = $request['access_token'];
 
-	/**
-	 * 使用微博登录：获取微博上的用户信息
-	 * @param  Request $request
-	 * @return view:'home';data:[...]
-	 */
-	public function getWeiboUser(Request $request) {
+			$expires_in = $request['expires_in'];
 
-		//从request中获取数据
-		$access_token = $request['access_token'];
+			$uid = $request['uid'];
 
-		$expires_in = $request['expires_in'];
+			$http = new Client();
 
-		$uid = $request['uid'];
+			$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
 
-		$http = new Client();
+			//未来可能有用，先注释了
+			//$data = json_decode((string)$response->getBody(), true);
 
-		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
+			$data = $response->getBody();
 
-		$user = new User;
+			$user = new User;
 
-		$data = json_decode((string)$response->getBody(), true);
+			$id = $data['id'];
+			if(($user->find($id)) == null) {
+				//将微博数据保存到用户表中
+				$user->id = $id;
+				$user->idStr = $data['idStr'];
+				$user->screen_name = $data['screen_name'];
+				$user->province = $data['province'];
+				$user->city = $data['city'];
+				$user->location = $data['location'];
+				$user->description = $data['description'];
+				$user->profile_Image_url = $data['profile_Image_url'];
+				$user->profile_url = $data['profile_url'];
+				$user->gender = $data['gender'];
+				$user->remark = $data['remark'];
+				$user->avatar_hd = $data['avatar_hd'];
+				$user->online_status = $data['online_status'];
+				$user->lang = $data['lang'];
+				$user->remember_token = api_token($user);
+				$user->save();
+			}
 
-		//将微博数据保存到用户表中
-		$user->id = $data['id'];
-		$user->idStr = $data['idStr'];
-		$user->screen_name = $data['screen_name'];
-		$user->province = $data['province'];
-		$user->city = $data['city'];
-		$user->location = $data['location'];
-		$user->description = $data['description'];
-		$user->profile_Image_url = $data['profile_Image_url'];
-		$user->profile_url = $data['profile_url'];
-		$user->gender = $data['gender'];
-		$user->remark = $data['remark'];
-		$user->avatar_hd = $data['avatar_hd'];
-		$user->online_status = $data['online_status'];
-		$user->lang = $data['lang'];
-		$user->remember_token = api_token($user);
-		$user->save();
+			//利用用户进行权限验证
+			Auth::login($user,true);
 
-		//利用用户进行权限验证
-		Auth::login($user,true);
-
-		return view('home', ['user'=>$user]);
+			return view('/', ['user'=>$user]);
+		}
 	}
 
 	public function activityList($user_id){
