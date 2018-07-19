@@ -13,7 +13,7 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
+                    <a href="/user/weibo_login">使用微博登录</a>
                     You are logged in!
                 </div>
             </div>

@@ -63,50 +63,49 @@ class UserController extends Controller{
 	}
 
 
-		public function getWeiboUser(Request $request){
-			//从request中获取数据
-			$access_token = $request['access_token'];
+	public function getWeiboUser(Request $request){
+		//从request中获取数据
+		$access_token = $request['access_token'];
 
-			$expires_in = $request['expires_in'];
+		$expires_in = $request['expires_in'];
 
-			$uid = $request['uid'];
+		$uid = $request['uid'];
 
-			$http = new Client();
+		$http = new Client();
 
-			$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
+		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
 
-			//未来可能有用，先注释了
-			//$data = json_decode((string)$response->getBody(), true);
+		//未来可能有用，先注释了
+		//$data = json_decode((string)$response->getBody(), true);
 
-			$data = json_decode((string)$response->getBody(), true);
+		$data = json_decode((string)$response->getBody(), true);
 
-			$user = new User;
+		$user = new User;
 
-			$id = $data['id'];
-			if(($user->find($id)) == null) {
-				//将微博数据保存到用户表中
-				$user->id = $id;
-				$user->idStr = $data['idStr'];
-				$user->screen_name = $data['screen_name'];
-				$user->province = $data['province'];
-				$user->city = $data['city'];
-				$user->location = $data['location'];
-				$user->description = $data['description'];
-				$user->profile_Image_url = $data['profile_Image_url'];
-				$user->profile_url = $data['profile_url'];
-				$user->gender = $data['gender'];
-				$user->remark = $data['remark'];
-				$user->avatar_hd = $data['avatar_hd'];
-				$user->online_status = $data['online_status'];
-				$user->lang = $data['lang'];
-				$user->save();
-			}
-
-			//利用用户进行权限验证
-			Auth::login($user,true);
-
-			return view('/', ['user'=>$user]);
+		$id = $data['id'];
+		$user->id = $id;
+		$user->idStr = $data['idStr'];
+		$user->screen_name = $data['screen_name'];
+		$user->province = $data['province'];
+		$user->city = $data['city'];
+		$user->location = $data['location'];
+		$user->description = $data['description'];
+		$user->profile_Image_url = $data['profile_Image_url'];
+		$user->profile_url = $data['profile_url'];
+		$user->gender = $data['gender'];
+		$user->remark = $data['remark'];
+		$user->avatar_hd = $data['avatar_hd'];
+		$user->online_status = $data['online_status'];
+		$user->lang = $data['lang'];
+		if(($user->find($id)) == null) {
+			//将微博数据保存到用户表中
+			$user->save();
 		}
+
+		//利用用户进行权限验证
+		Auth::login($user,true);
+
+		return view('/', ['user'=>$user]);
 	}
 
 	public function activityList($user_id){
