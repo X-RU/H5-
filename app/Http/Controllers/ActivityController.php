@@ -61,9 +61,7 @@ class ActivityController extends Controller{
 
 		$activity->latitude_longitude = $latitude_longitude;
 
-		//token是指
-		$token = $request->input('token');
-		$user = User::where('remember_token',$token)->first();
+		$user = Auth::user();
 		$activity->init_user_id = $user->id;
 
 
@@ -81,9 +79,7 @@ class ActivityController extends Controller{
 			$description = "该用户很懒，什么都没填。";
 		$activity->description = $description;
 
-		$status = $request->input('status');
-		if(is_null($status)&&is_empty($status))
-			$status = 4;
+		$status = "尚未开始";
 
 		$activity->status = $status;
 
@@ -165,10 +161,9 @@ class ActivityController extends Controller{
 
 		$activity_id = $request->input('activity_id');
 
-		$user_id = $request->input('user_id');
-
-		if(is_null($user_id))
-			$user_id = 234;
+		//获取用户id
+		$user = Auth::user();
+		$user_id = $user->id;
 
 		$userActivity = new UserActivity;
 
@@ -176,13 +171,50 @@ class ActivityController extends Controller{
 
 		$userActivity->activity_id = $activity_id;
 
-		$userActivity->save();
+		$activityController = new ActivityController();
+
+		if($userActivity->save())
+			//返回调用response
+			return $activityController ->response_cjj('','200','报名成功');
+		else
+			return $activityController ->response_cjj('','201','报名失败');
+	}
+
+
+    /**
+     * 用户取消活动
+     *
+     * @param Request $request
+     * @return Response
+     */
+	public function projectCancel(Request $request){
+
+		$activity_id = $request->input('activity_id');
+		$activity    = Activity::where('id',$activity_id)->get();
+
+		//获取用户id
+		$user = Auth::user();
+		$user_id = $user->id;
 
 		$activityController = new ActivityController();
 
-		//返回调用response
-		return $activityController ->response_cjj('','200','success');
+		//如果活动是用户创建的就删除活动
+		if($activity->init_user_id == $user_id){
+			$activity->delete();
+
+		}
+		else{//如果活动不是用户创建的，就删除用户活动记录
+			$userActivity = UserActivity::where('')->where();
+
+		}
+
+		if($userActivity->save())
+			//返回调用response
+			return $activityController ->response_cjj('','200','取消报名成功');
+		else
+			return $activityController ->response_cjj('','201','取消报名失败');
 	}
+
 
     /**
      * 用户自己创建的活动列表
@@ -244,6 +276,111 @@ class ActivityController extends Controller{
 
 
 		
+	}
+
+    /**
+     * 某一活动的详细信息
+     *
+     * @param int $project_id
+     * @return Response
+     */
+	public function detailedProjectInformation($project_id){
+
+		//实例化类
+		$activityController = new ActivityController();
+
+		$project = Activity::where('id',$project_id)->get();
+
+		if(is_null($project)){
+
+			$data = array();
+
+			$init_user_id =  $project->init_user_id;
+			$init_user = User::where('id',$init_user_id)->get();
+			$init_user_name = $init_user->screen_name;
+
+			//往$data中填充数据
+			$data['creator'] = $init_user_name;
+			$data['title'] = $project->title;
+			$data['time'] = $project->time;
+			$data['latitude_longitude'] = $project->latitude_longitude;
+			$data['location'] = $project->location;
+			$data['description'] = $project->description;
+
+
+			//获取当前登陆的用户的信息
+			$user = Auth::user();
+
+			//如果当前登陆用户和活动发起人相同，那么就说明这个人是活动发起人，否则这个人就不是活动发起人
+			if($user->id == $init_user_id){
+				$data['isManager'] = true;
+			}
+			else{
+				$data['isManager'] = false;
+			}
+		
+			return $activityController->response_cjj($data,'200','success');
+		}
+		else{
+			return $activityController->response_cjj($project,'400','failure');
+		}
+
+	}
+
+
+	 /**
+     * 与活动有关的人员信息
+     *
+     * @param int $project_id
+     * @return Response
+     */
+	public function relationPeople($project_id){
+
+		$userActivityList = UserActivity::where('activity_id',$project_id)->get();
+
+		//创建用户id列表数组
+		$user_id_list = array(); 
+
+		//根据用户活动关系获取活动id
+		foreach($userActivityList as $userActivity){
+
+			array_push($user_id_list,$userActivity->user_id);
+
+		}
+
+		//根据活动id列表查询用户
+		$user_list = User::find($user_id_list);
+
+		//提取每个用户的screen_name、description、gender字段来显示。
+		$users = array();
+		foreach ($user_list as $user) {
+			# code...
+			$user_message = array();
+			$user_message['screen_name'] = $user->screen_name;
+			$user_message['description'] = $user->description;
+			$user_message['gender'] = $user->gender;
+			$user_message['picture_url'] = $user->profile_url;
+			array_push($users,$user_message);
+		}
+
+		//实例化类
+		$activityController = new ActivityController();
+
+		//返回调用response
+		return $activityController ->response_cjj($users,'200','success');
+
+	}
+
+	//管理活动
+	public function manager($project_id){
+
+		$activity = Activity::where('id',$project_id)->get();
+
+		//实例化类
+		$activityController = new ActivityController();
+
+		//返回调用response
+		return $activityController ->response_cjj($activity,'200','success');
 	}
 
 	//装饰response接口

@@ -44,6 +44,9 @@ Route::group(['prefix'=> 'project'], function () {
 	//用户参加活动路由
 	Route::post('attend','ActivityController@projectAttend')->name('projectAttend');
 
+	//用户取消活动路由
+	Route::post('cancel','ActivityController@projectCancel')->name('projectCancel');
+
 	//我创建的活动路由
 	Route::get('theProjectICreate/{user_id}','ActivityController@theProjectICreate')->name('theProjectICreate');
 
@@ -53,11 +56,14 @@ Route::group(['prefix'=> 'project'], function () {
 	//搜索活动路由
 	Route::get('search','ActivityController@projectSearch')->name('projectSearch');
 
-	//某一活动的详细内容路由
-	Route::get('detailed/{id}','ActivityController@projectList')->name('projectList');
+	//活动管理
+	Route::get('manager/{project_id}','ActivityController@manager')->name('manager');
 
-	//某一活动的参与人员
-	Route::get('relationPeople/{id}','ActivityController@relationPeople')->name('relationPeople');
+	//某一活动的详细内容路由
+	Route::get('detailed/{project_id}','ActivityController@detailedProjectInformation')->name('detailedProjectInformation');
+
+	//某一活动的参与人员路由
+	Route::get('relationPeople/{project_id}','ActivityController@relationPeople')->name('relationPeople');
 
 });
 

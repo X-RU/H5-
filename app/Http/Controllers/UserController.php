@@ -115,6 +115,8 @@ class UserController extends Controller{
 		//查询用户创建的活动
 		$theActivitiesICreate = Activity::where('init_user_id',$user_id)->get();
 
+		//dd($theActivitiesICreate);
+
 		//查询用户参加的活动关系
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();
 
@@ -133,11 +135,12 @@ class UserController extends Controller{
 		//我参加的活动
 		$theActivitiesIAttend = Activity::find($activity_id_list);
 
-		$theActivitiesIAttend = array_collapse($theActivitiesIAttend,$theActivitiesICreate);
+		$total = $theActivitiesIAttend->merge($theActivitiesICreate);
 
+	
 		$userController = new UserController;
 
-		return $userController->response_cjj($theActivitiesIAttend,'200','success');
+		return $userController->response_cjj($total,'200','success');
 	}
 
 	//装饰response接口

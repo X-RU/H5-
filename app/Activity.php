@@ -37,5 +37,6 @@ class Activity extends Model
         'init_user_id',    #活动创建人的id
         'picture_url',     #活动图片的url
         'description',     #活动的介绍
+        'status'
     ];
 }
