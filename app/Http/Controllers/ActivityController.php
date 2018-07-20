@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Activity;
 use App\UserActivity;
@@ -198,15 +199,8 @@ class ActivityController extends Controller{
 
 		$activityController = new ActivityController();
 
-		//如果活动是用户创建的就删除活动
-		if($activity->init_user_id == $user_id){
-			$activity->delete();
+			$userActivity = UserActivity::where('activity_id',$activity_id)->where('user_id',$user_id);
 
-		}
-		else{//如果活动不是用户创建的，就删除用户活动记录
-			$userActivity = UserActivity::where('')->where();
-
-		}
 
 		if($userActivity->save())
 			//返回调用response

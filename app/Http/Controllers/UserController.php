@@ -8,6 +8,7 @@ use App\User;
 use App\Activity;
 use App\UserActivity;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Auth\Authenticatable
 
 class UserController extends Controller{
 
@@ -82,30 +83,44 @@ class UserController extends Controller{
 
 		$user = new User;
 
+
+
 		$id = $data['id'];
-		$user->id = $id;
-		$user->idStr = $data['idstr'];
-		$user->screen_name = $data['screen_name'];
-		$user->province = $data['province'];
-		$user->city = $data['city'];
-		$user->location = $data['location'];
-		$user->description = $data['description'];
-		$user->profile_Image_url = $data['profile_image_url'];
-		$user->profile_url = $data['profile_url'];
-		$user->gender = $data['gender'];
-		$user->remark = $data['remark'];
-		$user->avatar_hd = $data['avatar_hd'];
-		$user->online_status = $data['online_status'];
-		$user->lang = $data['lang'];
-		if(($user->find($id)) == null) {
-			//将微博数据保存到用户表中
+		$user_db = User::find($id);
+
+		if(null == $user_db){
+			$user->id = $id;
+			$user->idStr = $data['idstr'];
+			$user->screen_name = $data['screen_name'];
+			$user->province = $data['province'];
+			$user->city = $data['city'];
+			$user->location = $data['location'];
+			$user->description = $data['description'];
+			$user->profile_Image_url = $data['profile_image_url'];
+			$user->profile_url = $data['profile_url'];
+			$user->gender = $data['gender'];
+			$user->remark = $data['remark'];
+			$user->avatar_hd = $data['avatar_hd'];
+			$user->online_status = $data['online_status'];
+			$user->lang = $data['lang'];
+			
+			// 将微博数据保存到用户表中
 			$user->save();
+			
+
+			// 利用用户进行权限验证
+			Auth::login($user,true);
+			return view('home', ['user'=>$user]);
+		}
+		else{
+
+			// 利用用户进行权限验证
+			Auth::login($user_db,true);
+			return view('home', ['user'=>$user_db]);
+
 		}
 
-		//利用用户进行权限验证
-		Auth::login($user,true);
 
-		return view('/', ['user'=>$user]);
 	}
 
 	public function activityList($user_id){
