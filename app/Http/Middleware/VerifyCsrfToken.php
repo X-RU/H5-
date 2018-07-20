@@ -12,6 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        'http://homestead.app/project/create',
+        'http://homestead.app/project/update',
+        'http://homestead.app/project/attend'
     ];
 }

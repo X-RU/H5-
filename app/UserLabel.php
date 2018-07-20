@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User_label extends Model
+class UserLabel extends Model
 {
 
     /**
@@ -19,7 +19,7 @@ class User_label extends Model
      *
      * @var int
      */
-    protected $primaryKey = 'pk_merge';
+    protected $primaryKey = 'id';
 
 
     /**

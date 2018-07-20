@@ -759,7 +759,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
             if (empty($attributes)) {
                 return true;
             }
-
             $query->insert($attributes);
         }
 
