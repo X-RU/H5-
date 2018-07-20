@@ -19,7 +19,6 @@ class User extends Model
      * @var int
      */
     protected $primaryKey = 'id';
-
     //设置主键是非递增的，是可以自己设置的。
     public $incrementing = false;
     /**

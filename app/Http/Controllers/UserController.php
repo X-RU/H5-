@@ -84,13 +84,13 @@ class UserController extends Controller{
 
 		$id = $data['id'];
 		$user->id = $id;
-		$user->idStr = $data['idStr'];
+		$user->idStr = $data['idstr'];
 		$user->screen_name = $data['screen_name'];
 		$user->province = $data['province'];
 		$user->city = $data['city'];
 		$user->location = $data['location'];
 		$user->description = $data['description'];
-		$user->profile_Image_url = $data['profile_Image_url'];
+		$user->profile_Image_url = $data['profile_image_url'];
 		$user->profile_url = $data['profile_url'];
 		$user->gender = $data['gender'];
 		$user->remark = $data['remark'];
