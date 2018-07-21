@@ -8,7 +8,7 @@ use App\User;
 use App\Activity;
 use App\UserActivity;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Auth\Authenticatable
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class UserController extends Controller{
 
@@ -58,16 +58,16 @@ class UserController extends Controller{
 		$requestBody = $http->request('POST', "https://api.weibo.com/oauth2/access_token",['form_params' => $params])->getBody();
 
 		$contents = json_decode($requestBody->getContents(), true);
+
 		$access_token = $contents['access_token'];
 		$uid = $contents['uid'];
-		return redirect()->action('UserController@getWeiboUser', ['access_token'=>$access_token, 'uid'=>$uid]);
+		return redirect()->action('UserController@getWeiboUser', ['access_token'=>$access_token, 'uid'=>$uid])->send();
 	}
 
 
 	public function getWeiboUser(Request $request){
 		//从request中获取数据
 		$access_token = $request['access_token'];
-
 		$expires_in = $request['expires_in'];
 
 		$uid = $request['uid'];
@@ -82,8 +82,6 @@ class UserController extends Controller{
 		$data = json_decode((string)$response->getBody(), true);
 
 		$user = new User;
-
-
 
 		$id = $data['id'];
 		$user_db = User::find($id);
@@ -103,21 +101,17 @@ class UserController extends Controller{
 			$user->avatar_hd = $data['avatar_hd'];
 			$user->online_status = $data['online_status'];
 			$user->lang = $data['lang'];
-			
 			// 将微博数据保存到用户表中
 			$user->save();
-			
 
 			// 利用用户进行权限验证
 			Auth::login($user,true);
 			return view('home', ['user'=>$user]);
 		}
 		else{
-
 			// 利用用户进行权限验证
 			Auth::login($user_db,true);
 			return view('home', ['user'=>$user_db]);
-
 		}
 
 
@@ -152,7 +146,7 @@ class UserController extends Controller{
 
 		$total = $theActivitiesIAttend->merge($theActivitiesICreate);
 
-	
+
 		$userController = new UserController;
 
 		return $userController->response_cjj($total,'200','success');

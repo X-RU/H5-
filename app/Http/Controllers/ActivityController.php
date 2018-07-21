@@ -149,7 +149,7 @@ class ActivityController extends Controller{
 
 		//返回调用response
 		return $activityController ->response_cjj($activity,'200','success');
-		
+
 	}
 
     /**
@@ -241,7 +241,7 @@ class ActivityController extends Controller{
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();
 
 		//创建活动id列表
-		$activity_id_list = array(); 
+		$activity_id_list = array();
 
 		//根据用户活动关系获取活动id
 		foreach($activity_relations as $activity_relation){
@@ -269,7 +269,7 @@ class ActivityController extends Controller{
 	public function projectSearch(Request $request){
 
 
-		
+
 	}
 
     /**
@@ -312,7 +312,7 @@ class ActivityController extends Controller{
 			else{
 				$data['isManager'] = false;
 			}
-		
+
 			return $activityController->response_cjj($data,'200','success');
 		}
 		else{
@@ -333,7 +333,7 @@ class ActivityController extends Controller{
 		$userActivityList = UserActivity::where('activity_id',$project_id)->get();
 
 		//创建用户id列表数组
-		$user_id_list = array(); 
+		$user_id_list = array();
 
 		//根据用户活动关系获取活动id
 		foreach($userActivityList as $userActivity){

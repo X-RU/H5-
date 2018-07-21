@@ -8,22 +8,18 @@
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
-|    
+|
 |    type 1:
-|  
+|
 |    Route::get('users', function () {
 |       // Matches The "/admin/users" URL
 |    });
 |
 |    type 2:
-|     
+|
 |    Route::post('/project/create','ActivityController@create')->name('projectCreate');
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/user/message', 'UserController@getUser');
 
@@ -82,12 +78,3 @@ Route::get('/user/get_weibo_user', 'UserController@getWeiboUser');
 
 //与用户有关的所有的活动的列表路由
 Route::get('/user/activityList/{user_id}','UserController@activityList')->name('activityList');
-
-
-
-
-
-
-
-
-
