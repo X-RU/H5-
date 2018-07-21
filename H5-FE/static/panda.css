@@ -1,0 +1,35 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body{
+	/*height: 100%;*/
+	padding-bottom: 5em;
+}
+
+footer{
+	width: 100%;
+	height: 3em;
+	position: absolute;
+	bottom: 0;
+	border-top-style: solid;
+	border-top-color: black;
+	border-top-width: 0.1em;
+}
+
+.icon{
+	height: 100%;
+	width: 3em;
+}
+
+.left-icon{
+	margin-left: 30%;
+	float: left;
+}
+
+.right-icon{
+	margin-right: 30%;
+	float: right;
+}
