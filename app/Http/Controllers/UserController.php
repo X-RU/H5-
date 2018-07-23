@@ -60,7 +60,7 @@ class UserController extends Controller
 	public function weiboLogin() {
 
 		$client_id = '1528221042';
-		$redirect_uri = urlencode('http://h5.jayna.fun/user/get_weibo_user');
+		$redirect_uri = urlencode('http://h5.jayna.fun/user/access_token');
 		$display = 'mobile';
 		return redirect("https://api.weibo.com/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&display=$display");
 	}
@@ -70,7 +70,7 @@ class UserController extends Controller
 	 *
 	 * @return redirect to https://api.weibo.com/oauth2/access_token
 	 */
-	public function getWeiboUser(Request $request) {
+	public function accessToken(Request $request) {
 		$code = $request['code'];
 		$params = [
 			'client_id' => '1528221042',
@@ -86,6 +86,18 @@ class UserController extends Controller
 
 		$access_token = $contents['access_token'];
 		$uid = $contents['uid'];
+		return redirect()->action('UserController@getWeiboUser', ['access_token'=>$access_token, 'uid'=>$uid])->send();
+	}
+
+
+	public function getWeiboUser(Request $request) {
+		//从request中获取数据
+		$access_token = $request['access_token'];
+		$expires_in = $request['expires_in'];
+
+		$uid = $request['uid'];
+
+		$http = new Client();
 
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
 
