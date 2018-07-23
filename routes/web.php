@@ -21,10 +21,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('/user/message', 'UserController@getUser');
 
 Auth::routes();
@@ -33,7 +29,7 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 
 //为路由添加前缀
-Route::group(['prefix'=> 'project'], function () {
+Route::group(['prefix'=> '#/project'], function () {
 
 	//活动发起人创建活动路由
 	Route::post('create','ActivityController@projectCreate')->name('projectCreate');
@@ -48,10 +44,10 @@ Route::group(['prefix'=> 'project'], function () {
 	Route::post('cancel','ActivityController@projectCancel')->name('projectCancel');
 
 	//我创建的活动路由
-	Route::get('theProjectICreate/{user_id}','ActivityController@theProjectICreate')->name('theProjectICreate');
+	Route::get('theProjectICreate','ActivityController@theProjectICreate')->name('theProjectICreate');
 
 	//我参加的活动路由
-	Route::get('theProjectIAttend/{user_id}','ActivityController@theProjectIAttend')->name('theProjectIAttend');
+	Route::get('theProjectIAttend','ActivityController@theProjectIAttend')->name('theProjectIAttend');
 
 	//搜索活动路由
 	Route::get('search','ActivityController@projectSearch')->name('projectSearch');
@@ -68,8 +64,8 @@ Route::group(['prefix'=> 'project'], function () {
 });
 
 
-//获取用户信息路由
-Route::get('/user/message/{id}', 'UserController@getUser')->middleware('auth');
+// //获取用户信息路由
+Route::get('/user/message', 'UserController@getUser')->middleware('auth');
 
 //使用微博登录：获取code
 Route::get('/user/weibo_login', 'UserController@weiboLogin');
@@ -80,8 +76,12 @@ Route::get('/user/access_token', 'UserController@accessToken');
 //使用微博登录：获取用户信息
 Route::get('/user/get_weibo_user', 'UserController@getWeiboUser');
 
+Route::get('/user/get_weibo_user_test', 'UserController@getWeiboUserTest');
+
+Route::post('/user/update', 'UserController@updateUser')->middleware('auth');
+
 //与用户有关的所有的活动的列表路由
-Route::get('/user/activityList/{user_id}','UserController@activityList')->name('activityList');
+Route::get('/user/activityList','UserController@activityList')->name('activityList');
 
 
 

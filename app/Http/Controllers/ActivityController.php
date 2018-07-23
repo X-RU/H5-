@@ -15,10 +15,10 @@ class ActivityController extends Controller{
 	/**
 	 * 只允许登录用户访问
 	 */
-	// public function __construct()
-	// {
-	//     Auth::guard()->check();
-	// }
+	public function __construct()
+	{
+	    $this->middleware('auth');
+	}
 
 	 /**
      * 用户创建活动
@@ -84,7 +84,7 @@ class ActivityController extends Controller{
 
 		$activity->status = $status;
 
-		var_dump($activity->save());
+		$activity->save();
 
 		$activityController = new ActivityController();
 
@@ -131,6 +131,10 @@ class ActivityController extends Controller{
 		if(!is_null($latitude_longitude)&&$latitude_longitude!="")
 			$activity->latitude_longitude = $latitude_longitude;
 
+		$status = $request->input('status');
+		if(!is_null($status))
+			$activity->status = $status;
+
 		//获取照片的url
 		$picture_url = $request->input('picture');
 
@@ -143,7 +147,7 @@ class ActivityController extends Controller{
 		if(!is_null($description)&&$description!="")
 			$activity->description = $description;
 
-		var_dump($activity->save());
+		$activity->save();
 
 		$activityController = new ActivityController();
 
@@ -216,7 +220,10 @@ class ActivityController extends Controller{
      * @param int $user_id
      * @return Response
      */
-	public function theProjectICreate($user_id){
+	public function theProjectICreate(){
+
+		$user = User::Auth();
+		$user_id = $user->id;
 
 		//查询用户创建的活动
 		$activity_list = Activity::where('init_user_id',$user_id)->get();
@@ -235,7 +242,11 @@ class ActivityController extends Controller{
      * @param int $user_id
      * @return Response
      */
-	public function theProjectIAttend($user_id){
+	public function theProjectIAttend(){
+
+
+		$user = User::Auth();
+		$user_id = $user->id;
 
 		//查询用户参加的活动关系
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();

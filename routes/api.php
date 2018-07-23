@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+//获取用户信息路由
+Route::get('/user/message/{id}', 'UserController@getUser')->middleware('auth:api');

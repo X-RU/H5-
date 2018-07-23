@@ -22,7 +22,7 @@ class User extends Authenticatable
      * @var int
      */
     protected $primaryKey = 'id';
-    protected $timestamps = true;
+    public $timestamps = true;
 
     // 设置主键是非递增的，是可以自己设置的。
     public $incrementing = false;
@@ -31,7 +31,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['id','idStr','screen_name','province','city','location','description','profile_Image_url','profile_url','gender','remark','avatar_hd','online_status','lang'];
+    protected $fillable = ['id','idStr','screen_name','province','city','location','description','profile_Image_url','profile_url','gender','remark','avatar_hd','online_status','lang','api_token'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -39,6 +39,6 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'remember_token',
+        'api_token'
     ];
 }

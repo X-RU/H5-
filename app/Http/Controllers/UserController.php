@@ -8,7 +8,7 @@ use App\User;
 use App\Activity;
 use App\UserActivity;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Auth\Authenticatable
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class UserController extends Controller{
 
@@ -18,11 +18,9 @@ class UserController extends Controller{
 	 * @return view:'user_msg';data:[...]
 	 *
 	 */
-	public function getUser($id) {
+	public function getUser() {
 
-		$users = new User;
-
-		$user = $users->find($id);
+		$users = User::Auth();
 
 		return response()->json(['code' =>'200', 'message' => 'success', 'data' =>$user]);
 	}
@@ -103,10 +101,10 @@ class UserController extends Controller{
 			$user->avatar_hd = $data['avatar_hd'];
 			$user->online_status = $data['online_status'];
 			$user->lang = $data['lang'];
+			$user->remember_token = str_random(60);
 			
 			// 将微博数据保存到用户表中
 			$user->save();
-			
 
 			// 利用用户进行权限验证
 			Auth::login($user,true);
@@ -123,14 +121,16 @@ class UserController extends Controller{
 
 	}
 
-	public function activityList($user_id){
+
+	public function activityList(){
+
+		$user = User::Auth();
+		$user_id = $user->id;
 
 		$theActivitiesICreate = array();
 
 		//查询用户创建的活动
 		$theActivitiesICreate = Activity::where('init_user_id',$user_id)->get();
-
-		//dd($theActivitiesICreate);
 
 		//查询用户参加的活动关系
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();
@@ -156,6 +156,15 @@ class UserController extends Controller{
 		$userController = new UserController;
 
 		return $userController->response_cjj($total,'200','success');
+	}
+
+	public function updateUser(Request $request){
+		$user = User::Auth();
+		$profile_url = $request->input('profile_url');
+		$user->profile_url = $profile_url;
+		$user->save();
+		$userController = new UserController;
+		return $userController->response_cjj($user,'200','success');
 	}
 
 	//装饰response接口
