@@ -22,19 +22,19 @@ class UserController extends Controller
 		$token_value = $request['token'];
 		//若获取的token为空，则返回400
 		if($token_value == null)
-			return ['code' : 400];
+			return ['code'=>400];
 		//取出数据库中相应的记录
 		$token = App\Token::where('token_value', $token_value);
 		//若数据库中没有该token，则返回400
 		if($token == null)
-			return ['code', 400];
+			return ['code'=>400];
 		//设置时间区域，PRC代表中国
 		date_default_timezone_set(PRC);
 		//若当前时间已经超过时效时间，则返回400
 		if(strtotime(date("Y-m-d H:i:s"))>strtotime($token->expires_in))
-			return ['code' : 400];
+			return ['code'=>400];
 		//当前token通过重重关卡，返回200
-		return ['code' : 200];
+		return ['code'=>200];
 	}
 
 	/**
@@ -60,7 +60,7 @@ class UserController extends Controller
 	public function weiboLogin() {
 
 		$client_id = '1528221042';
-		$redirect_uri = urlencode('http://h5.jayna.fun/user/access_token');
+		$redirect_uri = urlencode('http://h5.jayna.fun/user/get_weibo_user');
 		$display = 'mobile';
 		return redirect("https://api.weibo.com/oauth2/authorize?client_id=$client_id&redirect_uri=$redirect_uri&display=$display");
 	}
@@ -70,7 +70,7 @@ class UserController extends Controller
 	 *
 	 * @return redirect to https://api.weibo.com/oauth2/access_token
 	 */
-	public function accessToken(Request $request) {
+	public function getWeiboUser(Request $request) {
 		$code = $request['code'];
 		$params = [
 			'client_id' => '1528221042',
@@ -86,23 +86,8 @@ class UserController extends Controller
 
 		$access_token = $contents['access_token'];
 		$uid = $contents['uid'];
-		return redirect()->action('UserController@getWeiboUser', ['access_token'=>$access_token, 'uid'=>$uid])->send();
-	}
-
-
-	public function getWeiboUser(Request $request) {
-		//从request中获取数据
-		$access_token = $request['access_token'];
-		$expires_in = $request['expires_in'];
-
-		$uid = $request['uid'];
-
-		$http = new Client();
 
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
-
-		//未来可能有用，先注释了
-		//$data = json_decode((string)$response->getBody(), true);
 
 		$data = json_decode((string)$response->getBody(), true);
 
@@ -150,10 +135,10 @@ class UserController extends Controller
 		//获取当前时间，并加上30分钟（作为有效时间）存到库里。
 		date_default_timezone_set(PRC);
 		$date_now = date("Y-m-d H:i:s");
-		$token->expires_in = date("Y-m-d H:i:s", strtotime($date_now) + 30*60));
+		$token->expires_in = date("Y-m-d H:i:s", strtotime($date_now) + 30*60);
 		$token->save();
 
-		return redirect("http://101.132.181.76:3434/?token=$token");
+		return redirect("http://10.11.26.2:8080/?token=$token");
 	}
 
 

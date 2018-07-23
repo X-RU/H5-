@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return redirect("http://101.132.181.76:3434");
+        return view('home');
+        //return redirect("http://101.132.181.76:3434");
     }
 }

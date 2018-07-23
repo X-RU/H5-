@@ -73,9 +73,6 @@ Route::get('/user/check_token', 'UserController@checkToken');
 //使用微博登录：获取code
 Route::get('/user/weibo_login', 'UserController@weiboLogin');
 
-//使用微博登录：获取access_token
-Route::get('/user/access_token', 'UserController@accessToken');
-
 //使用微博登录：获取用户信息
 Route::get('/user/get_weibo_user', 'UserController@getWeiboUser');
 

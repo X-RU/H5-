@@ -22,7 +22,7 @@ class User extends Authenticatable
      * @var int
      */
     protected $primaryKey = 'id';
-    protected $timestamps = true;
+    public $timestamps = true;
 
     // 设置主键是非递增的，是可以自己设置的。
     public $incrementing = false;
