@@ -79,6 +79,7 @@ class UserController extends Controller
 			'redirect_uri' => 'http://h5.jayna.fun/user/access_token',
 			'code' => $code
 		];
+		//返回微博接口，返回code
 		$http = new Client();
 		$requestBody = $http->request('POST', "https://api.weibo.com/oauth2/access_token",['form_params' => $params])->getBody();
 
@@ -94,11 +95,9 @@ class UserController extends Controller
 		//从request中获取数据
 		$access_token = $request['access_token'];
 		$expires_in = $request['expires_in'];
-
 		$uid = $request['uid'];
-
+		//访问微博接口，获取用户信息
 		$http = new Client();
-
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
 
 		$data = json_decode((string)$response->getBody(), true);
@@ -126,7 +125,6 @@ class UserController extends Controller
 			$user->lang = $data['lang'];
 			// 将微博数据保存到用户表中
 			$user->save();
-
 			//表示登录成功的用户是$user
 			$user_login = $user;
 		}
