@@ -101,7 +101,7 @@ class UserController extends Controller
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
 
 		$data = json_decode((string)$response->getBody(), true);
-
+		//创建user模版类对象
 		$user = new User;
 
 		$id = $data['id'];
