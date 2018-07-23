@@ -67,6 +67,9 @@ Route::group(['prefix'=> 'project'], function () {
 //获取用户信息路由
 Route::get('/user/message/{id}', 'UserController@getUser')->middleware('auth');
 
+//验证前端传来的token是否有效
+Route::get('/user/check_token', 'UserController@checkToken');
+
 //使用微博登录：获取code
 Route::get('/user/weibo_login', 'UserController@weiboLogin');
 

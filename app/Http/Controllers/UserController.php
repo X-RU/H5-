@@ -3,14 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\User;
 use App\Activity;
+use App\Token;
 use App\UserActivity;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-class UserController extends Controller{
+class UserController extends Controller
+{
+
+	/**
+	 * //验证前端传来的token是否有效
+	 * @param  Request $request
+	 * @return code
+	 */
+	public function checkToken(Request $request) {
+		$token_value = $request['token'];
+		//若获取的token为空，则返回400
+		if($token_value == null)
+			return ['code' : 400];
+		//取出数据库中相应的记录
+		$token = App\Token::where('token_value', $token_value);
+		//若数据库中没有该token，则返回400
+		if($token == null)
+			return ['code', 400];
+		//设置时间区域，PRC代表中国
+		date_default_timezone_set(PRC);
+		//若当前时间已经超过时效时间，则返回400
+		if(strtotime(date("Y-m-d H:i:s"))>strtotime($token->expires_in))
+			return ['code' : 400];
+		//当前token通过重重关卡，返回200
+		return ['code' : 200];
+	}
 
 	/**
 	 * 获取用户信息
@@ -65,7 +90,7 @@ class UserController extends Controller{
 	}
 
 
-	public function getWeiboUser(Request $request){
+	public function getWeiboUser(Request $request) {
 		//从request中获取数据
 		$access_token = $request['access_token'];
 		$expires_in = $request['expires_in'];
@@ -85,7 +110,8 @@ class UserController extends Controller{
 
 		$id = $data['id'];
 		$user_db = User::find($id);
-
+		//建立一个最后登录的$user_login,减少代码。
+		$user_login = null;
 		if(null == $user_db){
 			$user->id = $id;
 			$user->idStr = $data['idstr'];
@@ -104,18 +130,32 @@ class UserController extends Controller{
 			// 将微博数据保存到用户表中
 			$user->save();
 
-			// 利用用户进行权限验证
-			Auth::login($user,true);
-			return view('home', ['user'=>$user]);
+			//表示登录成功的用户是$user
+			$user_login = $user;
 		}
 		else{
-			// 利用用户进行权限验证
-			Auth::login($user_db,true);
-			return view('home', ['user'=>$user_db]);
+			//表示登录成功的用户是$user_db
+			$user_login = $user_db;
 		}
 
+		// 利用用户进行权限验证
+		Auth::login($user_login,true);
 
+		//生成token
+		$token = new Token();
+		//token_value
+		$token_value = str_random(60);
+		$token->token_value = $token_value;
+		$token->user_id = $id;
+		//获取当前时间，并加上30分钟（作为有效时间）存到库里。
+		date_default_timezone_set(PRC);
+		$date_now = date("Y-m-d H:i:s");
+		$token->expires_in = date("Y-m-d H:i:s", strtotime($date_now) + 30*60));
+		$token->save();
+
+		return redirect("http://101.132.181.76:3434/?token=$token");
 	}
+
 
 	public function activityList($user_id){
 
@@ -158,5 +198,4 @@ class UserController extends Controller{
 		return response()->json(['code' =>$code, 'message' => $message, 'data' =>$data]);
 
 	}
-
 }
