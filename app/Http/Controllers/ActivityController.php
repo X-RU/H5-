@@ -167,6 +167,8 @@ class ActivityController extends Controller{
 	public function projectAttend(Request $request){
 
 		$activity_id = $request->input('activity_id');
+		
+		
 
 		//获取用户id
 		$user = Auth::user();
@@ -178,13 +180,21 @@ class ActivityController extends Controller{
 
 		$userActivity->activity_id = $activity_id;
 
+		$temp = UserActivity::where('user_id',$user_id)->where('activity_id',$activity_id)->get();
+
 		$activityController = new ActivityController();
 
-		if($userActivity->save())
-			//返回调用response
-			return $activityController ->response_cjj('','200','报名成功');
-		else
-			return $activityController ->response_cjj('','201','报名失败');
+		if($temp->isEmpty()){
+
+			if($userActivity->save())
+				//返回调用response
+				return $activityController ->response_cjj('','200','报名成功');
+			else
+				return $activityController ->response_cjj('','201','报名失败');
+		}
+		else{
+			return $activityController->response_cjj('','202','已经报名，不可重复报名');
+		}
 	}
 
 
@@ -317,15 +327,19 @@ class ActivityController extends Controller{
 			//获取当前登陆的用户的信息
 			$user = Auth::user();
 
+
 			//如果当前登陆用户和活动发起人相同，那么就说明这个人是活动发起人，否则这个人就不是活动发起人
 			if($user->id == $init_user_id){
 				$data['isManager'] = 'true';
 			}
-			else{
-				$data['isManager'] = 'false';
-			}
+	         	else{
+			        $data['isManager'] = 'false';
+	          	}
 			
-			$status = UserActivity::where('user_id', $init_user_id)->where('activity_id', $project_id)->get();
+			$status = UserActivity::where('user_id', $user->id)->where('activity_id', $project_id)->get();
+			
+			//dd($status);
+
 			if($status->isEmpty()){
 				$data['status'] = 'false';
 			} else {

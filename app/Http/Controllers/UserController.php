@@ -79,7 +79,7 @@ class UserController extends Controller{
 		$expires_in = $request['expires_in'];
 
 		$uid = $request['uid'];
-
+		
 		$http = new Client();
 
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
@@ -110,10 +110,9 @@ class UserController extends Controller{
 			$user->online_status = $data['online_status'];
 			$user->lang = $data['lang'];
 			$user->api_token = str_random(60);
-			
+			$user->remember_token = "";
 			// 将微博数据保存到用户表中
 			$user->save();
-
 			// 利用用户进行权限验证
 			Auth::login($user,true);
 			return Redirect::to('/');
