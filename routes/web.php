@@ -21,6 +21,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::get('/user/message', 'UserController@getUser');
 
 Auth::routes();
@@ -29,7 +31,7 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 
 //为路由添加前缀
-Route::group(['prefix'=> '#/project'], function () {
+Route::group(['prefix'=> 'project'], function () {
 
 	//活动发起人创建活动路由
 	Route::post('create','ActivityController@projectCreate')->name('projectCreate');
@@ -61,8 +63,11 @@ Route::group(['prefix'=> '#/project'], function () {
 	//某一活动的参与人员路由
 	Route::get('relationPeople/{project_id}','ActivityController@relationPeople')->name('relationPeople');
 
+	Route::get('allActivity', 'ActivityController@activityList');
+
 });
 
+Route::get('/user/check_login', 'UserController@checkLogin');
 
 // //获取用户信息路由
 Route::get('/user/message', 'UserController@getUser')->middleware('auth');
@@ -82,9 +87,6 @@ Route::post('/user/update', 'UserController@updateUser')->middleware('auth');
 
 //与用户有关的所有的活动的列表路由
 Route::get('/user/activityList','UserController@activityList')->name('activityList');
-
-
-
 
 
 

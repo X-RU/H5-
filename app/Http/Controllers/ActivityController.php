@@ -27,7 +27,7 @@ class ActivityController extends Controller{
      * @return Response
      */
 	public function projectCreate(Request $request){
-
+		
 		$activity = new Activity;
 
 		//活动的主题
@@ -84,12 +84,14 @@ class ActivityController extends Controller{
 
 		$activity->status = $status;
 
-		$activity->save();
+		$activity->save();	
+		$id = $activity->id;
+		$data['id'] = $id;
 
 		$activityController = new ActivityController();
 
 		//返回调用response
-		return $activityController ->response_cjj($activity,'200','success');
+		return $activityController ->response_cjj($data,'200','success');
 
 	}
 
@@ -127,7 +129,7 @@ class ActivityController extends Controller{
 
 		//活动的经纬度（现在该字段用来表明活动的省市县）
 		$latitude_longitude = $request->input('latitude_longitude');
-
+		
 		if(!is_null($latitude_longitude)&&$latitude_longitude!="")
 			$activity->latitude_longitude = $latitude_longitude;
 
@@ -193,7 +195,7 @@ class ActivityController extends Controller{
      * @return Response
      */
 	public function projectCancel(Request $request){
-
+	
 		$activity_id = $request->input('activity_id');
 		$activity    = Activity::where('id',$activity_id)->get();
 
@@ -206,7 +208,7 @@ class ActivityController extends Controller{
 			$userActivity = UserActivity::where('activity_id',$activity_id)->where('user_id',$user_id);
 
 
-		if($userActivity->save())
+		if($userActivity->delete())
 			//返回调用response
 			return $activityController ->response_cjj('','200','取消报名成功');
 		else
@@ -222,7 +224,7 @@ class ActivityController extends Controller{
      */
 	public function theProjectICreate(){
 
-		$user = User::Auth();
+		$user = Auth::user();
 		$user_id = $user->id;
 
 		//查询用户创建的活动
@@ -245,7 +247,7 @@ class ActivityController extends Controller{
 	public function theProjectIAttend(){
 
 
-		$user = User::Auth();
+		$user = Auth::user();
 		$user_id = $user->id;
 
 		//查询用户参加的活动关系
@@ -294,14 +296,13 @@ class ActivityController extends Controller{
 		//实例化类
 		$activityController = new ActivityController();
 
-		$project = Activity::where('id',$project_id)->get();
+		$project = Activity::where('id',$project_id)->get()->first();
 
-		if(is_null($project)){
+		if(!is_null($project)){
 
 			$data = array();
-
-			$init_user_id =  $project->init_user_id;
-			$init_user = User::where('id',$init_user_id)->get();
+			$init_user_id = $project->init_user_id;
+			$init_user = User::where('id',$init_user_id)->get()->first();
 			$init_user_name = $init_user->screen_name;
 
 			//往$data中填充数据
@@ -318,12 +319,19 @@ class ActivityController extends Controller{
 
 			//如果当前登陆用户和活动发起人相同，那么就说明这个人是活动发起人，否则这个人就不是活动发起人
 			if($user->id == $init_user_id){
-				$data['isManager'] = true;
+				$data['isManager'] = 'true';
 			}
 			else{
-				$data['isManager'] = false;
+				$data['isManager'] = 'false';
 			}
-		
+			
+			$status = UserActivity::where('user_id', $init_user_id)->where('activity_id', $project_id)->get();
+			if($status->isEmpty()){
+				$data['status'] = 'false';
+			} else {
+				$data['status'] = 'true';
+			}
+
 			return $activityController->response_cjj($data,'200','success');
 		}
 		else{
@@ -386,6 +394,14 @@ class ActivityController extends Controller{
 
 		//返回调用response
 		return $activityController ->response_cjj($activity,'200','success');
+	}
+
+	public function activityList(Request $request) {
+		$activityList = Activity::all();
+
+		$activityController = new ActivityController();
+
+		return $activityController -> response_cjj($activityList, '200', 'success');
 	}
 
 	//装饰response接口

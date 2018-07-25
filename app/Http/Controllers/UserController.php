@@ -8,9 +8,20 @@ use App\User;
 use App\Activity;
 use App\UserActivity;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller{
+
+	/**
+	 * 验证用户是否登录
+	 */
+	public function checkLogin() {
+		if (Auth::check()){
+			return response()->json(['code' => '200', 'message' => 'success']);
+		}
+		return response()->json(['code' => '400', 'message' => 'failure']);
+	}
 
 	/**
 	 * 获取用户信息
@@ -20,8 +31,7 @@ class UserController extends Controller{
 	 */
 	public function getUser() {
 
-		$users = User::Auth();
-
+		$user = Auth::user();
 		return response()->json(['code' =>'200', 'message' => 'success', 'data' =>$user]);
 	}
 
@@ -81,8 +91,6 @@ class UserController extends Controller{
 
 		$user = new User;
 
-
-
 		$id = $data['id'];
 		$user_db = User::find($id);
 
@@ -101,20 +109,20 @@ class UserController extends Controller{
 			$user->avatar_hd = $data['avatar_hd'];
 			$user->online_status = $data['online_status'];
 			$user->lang = $data['lang'];
-			$user->remember_token = str_random(60);
+			$user->api_token = str_random(60);
 			
 			// 将微博数据保存到用户表中
 			$user->save();
 
 			// 利用用户进行权限验证
 			Auth::login($user,true);
-			return view('home', ['user'=>$user]);
+			return Redirect::to('/');
 		}
 		else{
 
 			// 利用用户进行权限验证
 			Auth::login($user_db,true);
-			return view('home', ['user'=>$user_db]);
+			return Redirect::to('/');
 
 		}
 
@@ -159,9 +167,9 @@ class UserController extends Controller{
 	}
 
 	public function updateUser(Request $request){
-		$user = User::Auth();
-		$profile_url = $request->input('profile_url');
-		$user->profile_url = $profile_url;
+		$user = Auth::user();
+		$profile_Image_url = $request->input('profile_Image_url');
+		$user->profile_Image_url = $profile_Image_url;
 		$user->save();
 		$userController = new UserController;
 		return $userController->response_cjj($user,'200','success');
