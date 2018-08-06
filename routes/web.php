@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -8,22 +10,18 @@
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
-|    
+|
 |    type 1:
-|  
+|
 |    Route::get('users', function () {
 |       // Matches The "/admin/users" URL
 |    });
 |
 |    type 2:
-|     
+|
 |    Route::post('/project/create','ActivityController@create')->name('projectCreate');
 |
 */
-
-use Illuminate\Http\Request;
-
-Route::get('/user/message', 'UserController@getUser');
 
 Auth::routes();
 
@@ -67,29 +65,25 @@ Route::group(['prefix'=> 'project'], function () {
 
 });
 
-Route::get('/user/check_login', 'UserController@checkLogin');
+Route::group(['prefix' => '/user'], function() {
+	//验证用户是否登录
+	Route::get('/check_login', 'UserController@checkLogin');
 
-// //获取用户信息路由
-Route::get('/user/message', 'UserController@getUser')->middleware('auth');
+	//获取用户信息
+	Route::get('/message', 'UserController@getUser')->middleware('auth');
 
-//使用微博登录：获取code
-Route::get('/user/weibo_login', 'UserController@weiboLogin');
+	//使用微博登录：获取code
+	Route::get('/weibo_login', 'UserController@weiboLogin');
 
-//使用微博登录：获取access_token
-Route::get('/user/access_token', 'UserController@accessToken');
+	//使用微博登录：获取access_token
+	Route::get('/access_token', 'UserController@accessToken');
 
-//使用微博登录：获取用户信息
-Route::get('/user/get_weibo_user', 'UserController@getWeiboUser');
+	//使用微博登录：获取用户信息
+	Route::get('/get_weibo_user', 'UserController@getWeiboUser');
 
-Route::get('/user/get_weibo_user_test', 'UserController@getWeiboUserTest');
+	//更新用户头像
+	Route::post('/update', 'UserController@updateUser')->middleware('auth');
 
-Route::post('/user/update', 'UserController@updateUser')->middleware('auth');
-
-//与用户有关的所有的活动的列表路由
-Route::get('/user/activityList','UserController@activityList')->name('activityList');
-
-
-
-
-
-
+	//与用户有关的所有的活动的列表路由
+	Route::get('/activityList','UserController@activityList')->name('activityList');
+});

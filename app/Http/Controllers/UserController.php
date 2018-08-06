@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\User;
 use App\Activity;
 use App\UserActivity;
@@ -30,7 +29,6 @@ class UserController extends Controller{
 	 *
 	 */
 	public function getUser() {
-
 		$user = Auth::user();
 		return response()->json(['code' =>'200', 'message' => 'success', 'data' =>$user]);
 	}
@@ -75,18 +73,12 @@ class UserController extends Controller{
 	public function getWeiboUser(Request $request){
 		//从request中获取数据
 		$access_token = $request['access_token'];
-
-		$expires_in = $request['expires_in'];
-
 		$uid = $request['uid'];
-		
+		//使用Client发起http请求
 		$http = new Client();
-
+		//从微博获取用户信息
 		$response = $http->get("https://api.weibo.com/2/users/show.json?access_token=$access_token&uid=$uid");
-
-		//未来可能有用，先注释了
-		//$data = json_decode((string)$response->getBody(), true);
-
+		//用json_decode(string, boolean)方法将string转化为json
 		$data = json_decode((string)$response->getBody(), true);
 
 		$user = new User;
@@ -118,14 +110,10 @@ class UserController extends Controller{
 			return Redirect::to('/');
 		}
 		else{
-
 			// 利用用户进行权限验证
 			Auth::login($user_db,true);
 			return Redirect::to('/');
-
 		}
-
-
 	}
 
 
@@ -159,13 +147,13 @@ class UserController extends Controller{
 
 		$total = $theActivitiesIAttend->merge($theActivitiesICreate);
 
-	
 		$userController = new UserController;
 
 		return $userController->response_cjj($total,'200','success');
 	}
 
 	public function updateUser(Request $request){
+		//获取当前登录的用户
 		$user = Auth::user();
 		$profile_Image_url = $request->input('profile_Image_url');
 		$user->profile_Image_url = $profile_Image_url;
@@ -178,7 +166,5 @@ class UserController extends Controller{
 	public function response_cjj($data, $code = '200', $message = 'success'){
 
 		return response()->json(['code' =>$code, 'message' => $message, 'data' =>$data]);
-
 	}
-
 }

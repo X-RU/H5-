@@ -27,7 +27,7 @@ class ActivityController extends Controller{
      * @return Response
      */
 	public function projectCreate(Request $request){
-		
+
 		$activity = new Activity;
 
 		//活动的主题
@@ -84,7 +84,7 @@ class ActivityController extends Controller{
 
 		$activity->status = $status;
 
-		$activity->save();	
+		$activity->save();
 		$id = $activity->id;
 		$data['id'] = $id;
 
@@ -129,7 +129,7 @@ class ActivityController extends Controller{
 
 		//活动的经纬度（现在该字段用来表明活动的省市县）
 		$latitude_longitude = $request->input('latitude_longitude');
-		
+
 		if(!is_null($latitude_longitude)&&$latitude_longitude!="")
 			$activity->latitude_longitude = $latitude_longitude;
 
@@ -155,7 +155,7 @@ class ActivityController extends Controller{
 
 		//返回调用response
 		return $activityController ->response_cjj($activity,'200','success');
-		
+
 	}
 
     /**
@@ -167,8 +167,8 @@ class ActivityController extends Controller{
 	public function projectAttend(Request $request){
 
 		$activity_id = $request->input('activity_id');
-		
-		
+
+
 
 		//获取用户id
 		$user = Auth::user();
@@ -205,7 +205,7 @@ class ActivityController extends Controller{
      * @return Response
      */
 	public function projectCancel(Request $request){
-	
+
 		$activity_id = $request->input('activity_id');
 		$activity    = Activity::where('id',$activity_id)->get();
 
@@ -264,7 +264,7 @@ class ActivityController extends Controller{
 		$activity_relations = UserActivity::where('user_id',$user_id)->get();
 
 		//创建活动id列表
-		$activity_id_list = array(); 
+		$activity_id_list = array();
 
 		//根据用户活动关系获取活动id
 		foreach($activity_relations as $activity_relation){
@@ -292,7 +292,7 @@ class ActivityController extends Controller{
 	public function projectSearch(Request $request){
 
 
-		
+
 	}
 
     /**
@@ -335,9 +335,9 @@ class ActivityController extends Controller{
 	         	else{
 			        $data['isManager'] = 'false';
 	          	}
-			
+
 			$status = UserActivity::where('user_id', $user->id)->where('activity_id', $project_id)->get();
-			
+
 			//dd($status);
 
 			if($status->isEmpty()){
@@ -366,7 +366,7 @@ class ActivityController extends Controller{
 		$userActivityList = UserActivity::where('activity_id',$project_id)->get();
 
 		//创建用户id列表数组
-		$user_id_list = array(); 
+		$user_id_list = array();
 
 		//根据用户活动关系获取活动id
 		foreach($userActivityList as $userActivity){
